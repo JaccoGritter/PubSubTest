@@ -9,11 +9,55 @@
 
     <title>PubSub</title>
 
+    <style>
+
+    body {
+        background-color: lightgrey;
+        font-family: Tahoma, sans-serif;
+    }
+
+    #maincontainer {
+        display: flex;
+        margin: 1rem;
+    }
+
+    #scorebordContainer {
+        width: 30rem;
+        height: 20rem;
+        background-color: cornsilk;
+        margin: 1rem;
+        padding-left: 2rem;
+    }
+
+    #teaminfo {
+        width: 30rem;
+        height: 20rem;
+        background-color: cornsilk;
+        margin: 1rem;
+        padding-left: 2rem;
+    }
+    
+    </style>
+
 </head>
 <body>
 
-    
-    
+    <div id="maincontainer">
+
+        <div id="scorebordContainer">
+            <h2>INFO BORD</h2>
+            <div id="scorebord">Rondetijden</div>
+            <div class="tijd">0.00</div>
+        </div>
+
+        <div id="teaminfo">
+            <h2>TEAM INFO</h2>
+            <div class="tijd">0.00</div>
+            <div id="motorstatus"></div>
+            <div id="bandentemp"></div>
+        </div>
+
+    </div>
 
 </body>
 </html>
