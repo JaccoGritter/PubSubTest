@@ -5,35 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/pubsub-js/1.7.0/pubsub.js"></script>
+    <script src = "myscript.js"></script>
 
-    <title>Document</title>
+    <title>PubSub</title>
 
 </head>
 <body>
+
     
-
-
-<script>
-
-let subscribers = [];
-
-function scoreBord(topic, tijd) {
-    console.log("Scorebord: " + tijd);
-}
-
-function journalist (topic, tijd) {
-    console.log("Journalist:" + tijd);
-}
-
-subscribers[0] = PubSub.subscribe("RONDETIJDEN", scoreBord);
-subscribers[1] = PubSub.subscribe("RONDETIJDEN", journalist);
-
-PubSub.publish("RONDETIJDEN", "30sec");
-
-console.log(subscribers[0]);
-console.log(subscribers[1]);
-
-</script>
+    
 
 </body>
 </html>
