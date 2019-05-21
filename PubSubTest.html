@@ -15,6 +15,8 @@
 
 <script>
 
+let subscribers = [];
+
 function scoreBord(topic, tijd) {
     console.log("Scorebord: " + tijd);
 }
@@ -23,11 +25,13 @@ function journalist (topic, tijd) {
     console.log("Journalist:" + tijd);
 }
 
-PubSub.subscribe("RONDETIJDEN", scoreBord);
-PubSub.subscribe("RONDETIJDEN", journalist);
+subscribers[0] = PubSub.subscribe("RONDETIJDEN", scoreBord);
+subscribers[1] = PubSub.subscribe("RONDETIJDEN", journalist);
 
 PubSub.publish("RONDETIJDEN", "30sec");
 
+console.log(subscribers[0]);
+console.log(subscribers[1]);
 
 </script>
 
