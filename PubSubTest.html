@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/pubsub-js/1.7.0/pubsub.js"></script>
+
+    <title>Document</title>
+
+</head>
+<body>
+    
+
+
+<script>
+
+function scoreBord(topic, tijd) {
+    console.log("Scorebord: " + tijd);
+}
+
+function journalist (topic, tijd) {
+    console.log("Journalist:" + tijd);
+}
+
+PubSub.subscribe("RONDETIJDEN", scoreBord);
+PubSub.subscribe("RONDETIJDEN", journalist);
+
+PubSub.publish("RONDETIJDEN", "30sec");
+
+
+</script>
+
+</body>
+</html>
