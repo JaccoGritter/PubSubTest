@@ -36,6 +36,10 @@
         margin: 1rem;
         padding-left: 2rem;
     }
+
+    #myButton {
+        margin-left: 2rem;
+    }
     
     </style>
 
@@ -46,18 +50,23 @@
 
         <div id="scorebordContainer">
             <h2>INFO BORD</h2>
-            <div id="scorebord">Rondetijden</div>
+            <div id="scorebord">Rondetijd</div>
             <div class="tijd">0.00</div>
         </div>
 
         <div id="teaminfo">
             <h2>TEAM INFO</h2>
-            <div class="tijd">0.00</div>
-            <div id="motorstatus"></div>
+            <p>Rondetijd:</p>
+            <div class="tijd">0.00</div><br>
+            <p>Motorstatus:</p>
+            <div id="motorstatus"></div><br>
+            <p>Bandentemperatuur:</p>
             <div id="bandentemp"></div>
         </div>
 
     </div>
+
+    <button id="myButton">Start de race!</button>
 
 </body>
 </html>
