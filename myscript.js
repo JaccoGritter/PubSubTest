@@ -3,10 +3,21 @@ window.onload = function() {
     document.getElementById("myButton").addEventListener("click", startStopRace) 
 };
 
+
+
 let raceBezig = false;
 
 let subscribers = [];
 let rondeTimer;  // variable voor het zetten van de timer
+
+
+
+const tijdwaarneming = {
+    zendTijd : function() {
+        let randomTijd = "2." + Math.floor(Math.random() * 60);
+        PubSub.publish("auto.rondetijden", {rondetijd: randomTijd});
+    }
+}
 
 function scorebord(topic, data) {
     document.getElementsByClassName("tijd")[0].innerHTML = data.rondetijd;
@@ -33,8 +44,8 @@ function startStopRace() {
     }
 
 function rondjesRijden() {
-    let randomTijd = "2." + Math.floor(Math.random() * 60);
-    PubSub.publish("auto.rondetijden", {rondetijd: randomTijd});
+
+    tijdwaarneming.zendTijd();
 
     let randomTemperatuur = Math.floor(Math.random() * 30) + 80;
     PubSub.publish("auto.bandentemperatuur", {bandentemperatuur: randomTemperatuur});
