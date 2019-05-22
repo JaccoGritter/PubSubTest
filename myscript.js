@@ -1,6 +1,8 @@
 
 window.onload = function() { 
-    document.getElementById("myButton").addEventListener("click", startStopRace) ;
+
+    document.getElementById("myStartButton").addEventListener("click", startStopRace);
+    document.getElementById("myMenuButton").addEventListener("click", kiesTeam);
 
     // build scoreboard for 5 cars (for the time being)
     for(let i = 0; i < 5; i++) {
@@ -8,7 +10,7 @@ window.onload = function() {
         document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
     }
 
-};
+
 
 class RaceAuto {
     constructor(teamnaam, idno) {
@@ -41,12 +43,23 @@ class RaceEngineer {
     constructor(naam, idno) {
         this.naam = naam;
         this.idno = idno;
+        this.isActive = false;
     }
+
+    setActive (active) {
+        this.isActive = active;
+    }
+
     getData(topic, data) {
-        document.getElementById("teamnaam").innerHTML = raceDeelnemers[0].getTeamnaam();
-        if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
-        if (topic == "auto.bandentemperatuur") document.getElementById("bandentemp").innerHTML = data.bandentemperatuur + " deg. celsius";
-        if (topic == "auto.motorstatus") document.getElementById("motorstatus").innerHTML = data.motorstatus;
+        console.log(this.idno +"-" + data.idno);
+
+        if (this.isActive && (this.idno == data.idno)) {
+            console.log(this.naam);
+            document.getElementById("teamnaam").innerHTML = raceDeelnemers[activeTeam].getTeamnaam();
+            if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
+            if (topic == "auto.bandentemperatuur") document.getElementById("bandentemp").innerHTML = data.bandentemperatuur + " deg. celsius";
+            if (topic == "auto.motorstatus") document.getElementById("motorstatus").innerHTML = data.motorstatus;
+        }
     }
 }
 
@@ -62,30 +75,60 @@ let raceBezig = false;
 let subscribers = [];
 let raceDeelnemers = [];
 let raceEngineers = [];
+let activeTeam = 0;     // team waarvan de teamdata getoond wordt
 let rondeTimer;  // variable voor het zetten van de timer
 
-raceDeelnemers.push (new RaceAuto("Red Bull", raceDeelnemers.length));  // set id no. to place in array
-raceEngineers.push (new RaceEngineer("Harry", raceDeelnemers.length));
+raceDeelnemers.push (new RaceAuto("Red Bull", 0));  // set id no. to place in array
+raceEngineers.push (new RaceEngineer("Harry", 0 ));
 
-raceDeelnemers.push (new RaceAuto("Ferrari", raceDeelnemers.length));   // set id no. to place in array
-raceEngineers.push (new RaceEngineer("Peter", raceDeelnemers.length));
+raceDeelnemers.push (new RaceAuto("Ferrari", 1));   // set id no. to place in array
+raceEngineers.push (new RaceEngineer("Peter", 1 ));
+
+for (let i=0; i<raceDeelnemers.length; i++) {
+    let menu = document.getElementById("teamselector");
+    let option = document.createElement("option");
+    //let value = document.createElement("value");
+    option.text = raceDeelnemers[i].getTeamnaam();
+    option.value = i;
+    menu.add(option);
+    }
+
+    //console.log (document.getElementById("teamselector").value);
 
  // subscribe all engineers to all subjects for their own car
 for (let i=0; i < raceDeelnemers.length; i++) {
-    subscribers.push (PubSub.subscribe("auto", raceEngineers[i].getData));
+    subscribers.push (PubSub.subscribe("auto", raceEngineers[i].getData.bind(raceEngineers[i])));
     }
 
 // scorebord subscribes to subject rondetijden only
-subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));     
+subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));   
+
+for (let i; i < raceDeelnemers.length; i++) {
+    getElementById
+}
+
+function kiesTeam() {
+    console.log("!" + activeTeam);
+    let keuze = document.getElementById("teamselector").value;
+    
+    raceEngineers[activeTeam].setActive(false);
+    activeTeam = keuze;
+    raceEngineers[activeTeam].setActive(true);
+    console.log(activeTeam);
+    raceEngineers.forEach(element => {
+        console.log(element.isActive);
+        
+    });
+}
 
 function startStopRace() {
     if (!raceBezig) {
-        document.getElementById("myButton").innerHTML = "Stop de race!";
+        document.getElementById("myStartButton").innerHTML = "Stop de race!";
         rondeTimer = setInterval(rondjesRijden, 2000);
         raceBezig = true;
     } else {
         clearInterval(rondeTimer);
-        document.getElementById("myButton").innerHTML = "Herstart de race!";
+        document.getElementById("myStartButton").innerHTML = "Herstart de race!";
         raceBezig = false;
     }
 }
@@ -99,3 +142,4 @@ function rondjesRijden() {
 
 
 
+}
