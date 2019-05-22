@@ -28,14 +28,14 @@
 
     #scorebordContainer {
         width: 25rem;
-        height: 20rem;
+        height: 23rem;
         background-color: cornsilk;
         margin: 1rem;
         padding-left: 2rem;
     }
 
     #scorebordContainer div {
-        margin-top: 1rem;
+        margin-top: 2rem;
         width: 80%;
         height: 2rem;
         background-color: rgb(233, 222, 67);
@@ -43,13 +43,14 @@
 
     #teaminfo {
         width: 25rem;
-        height: 20rem;
+        height: 22rem;
         background-color: cornsilk;
         margin: 1rem;
+        padding-top: 1rem;
         padding-left: 2rem;
     }
 
-    #myButton {
+    #myStartButton {
         margin-left: 2rem;
     }
     
@@ -67,6 +68,9 @@
         </div>
 
         <div id="teaminfo">
+            <select id="teamselector">
+            </select>
+            <button id="myMenuButton">kies team</button>
             <h2 id="teamnaam">TEAM</h2>
             <p>Rondetijd:</p>
             <div id="tijd">0.00</div><br>
@@ -78,7 +82,7 @@
 
     </div>
 
-    <button id="myButton">Start de race!</button>
+    <button id="myStartButton">Start de race!</button>
 
 </body>
 </html>
