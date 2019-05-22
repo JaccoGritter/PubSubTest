@@ -1,6 +1,13 @@
 
 window.onload = function() { 
-    document.getElementById("myButton").addEventListener("click", startStopRace) 
+    document.getElementById("myButton").addEventListener("click", startStopRace) ;
+
+    // build scoreboard for 5 cars (for the time being)
+    for(let i = 0; i < 5; i++) {
+        let newDiv = document.createElement("div");
+        document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
+    }
+
 };
 
 class RaceAuto {
@@ -25,7 +32,7 @@ class RaceAuto {
         PubSub.publish("auto.motorstatus", {motorstatus: randomMotorstatus});
 
         let randomTijd = "2." + Math.floor(Math.random() * 60);
-        PubSub.publish("auto.rondetijden", {teamnaam: this.teamnaam, rondetijd: randomTijd});
+        PubSub.publish("auto.rondetijden", {teamnaam: this.teamnaam, idno: this.idno, rondetijd: randomTijd});
         
     }
 }
@@ -36,24 +43,16 @@ class RaceEngineer {
         this.idno = idno;
     }
     getData(topic, data) {
+        document.getElementById("teamnaam").innerHTML = raceDeelnemers[0].getTeamnaam();
         if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
         if (topic == "auto.bandentemperatuur") document.getElementById("bandentemp").innerHTML = data.bandentemperatuur + " deg. celsius";
         if (topic == "auto.motorstatus") document.getElementById("motorstatus").innerHTML = data.motorstatus;
     }
 }
 
-
-const tijdwaarneming = {
-    zendTijd : function() {
-        let randomTijd = "2." + Math.floor(Math.random() * 60);
-        PubSub.publish("auto.rondetijden", {rondetijd: randomTijd});
-    }
-}
-
 const scorebord = {
     updateBord : function(topic, data) {
-        document.getElementById("teamnaam").innerHTML = data.teamnaam;
-        document.getElementById("rondetijd").innerHTML = data.rondetijd;
+        document.getElementById("row" + data.idno).innerHTML = data.teamnaam + ": " + data.rondetijd;
     }
 }
 
@@ -65,14 +64,19 @@ let raceDeelnemers = [];
 let raceEngineers = [];
 let rondeTimer;  // variable voor het zetten van de timer
 
-raceDeelnemers.push (new RaceAuto("Red Bull", raceDeelnemers.length));   // set id no. to place in array
+raceDeelnemers.push (new RaceAuto("Red Bull", raceDeelnemers.length));  // set id no. to place in array
 raceEngineers.push (new RaceEngineer("Harry", raceDeelnemers.length));
 
+raceDeelnemers.push (new RaceAuto("Ferrari", raceDeelnemers.length));   // set id no. to place in array
+raceEngineers.push (new RaceEngineer("Peter", raceDeelnemers.length));
 
-subscribers.push (PubSub.subscribe("auto", raceEngineers[0].getData));   // subscribe to all subjects
-subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));     // subscribe to subject rondetijden only
+ // subscribe all engineers to all subjects for their own car
+for (let i=0; i < raceDeelnemers.length; i++) {
+    subscribers.push (PubSub.subscribe("auto", raceEngineers[i].getData));
+    }
 
-
+// scorebord subscribes to subject rondetijden only
+subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));     
 
 function startStopRace() {
     if (!raceBezig) {
@@ -84,12 +88,14 @@ function startStopRace() {
         document.getElementById("myButton").innerHTML = "Herstart de race!";
         raceBezig = false;
     }
+}
 
 function rondjesRijden() {
 
-    raceDeelnemers[0].carStats();
-
+    for (let i=0; i<raceDeelnemers.length; i++){
+        raceDeelnemers[i].carStats();
+        }
     } 
 
 
-}
+
