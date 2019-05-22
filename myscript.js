@@ -11,11 +11,9 @@ window.onload = function() {
     }
 
 
-
 class RaceAuto {
-    constructor(teamnaam, idno) {
+    constructor(teamnaam) {
         this.teamnaam = teamnaam;
-        this.idno = idno;
         this.rondetijd = 0;
         this.bandentemperatuur = 0;
         this.motorstatus = 0;
@@ -25,47 +23,59 @@ class RaceAuto {
         return this.teamnaam;
     }
 
-    carStats() {
+    sendCarStats() {
 
         let randomTemperatuur = Math.floor(Math.random() * 30) + 80;
         PubSub.publish("auto.bandentemperatuur", {bandentemperatuur: randomTemperatuur});
 
+        let randomTijd = "2." + Math.floor(Math.random() * 60);
+        PubSub.publish("auto.rondetijden", {teamnaam: this.teamnaam, rondetijd: randomTijd});
+
         let randomMotorstatus = "" + (Math.floor(Math.random() * 50) + 50) + "%";
         PubSub.publish("auto.motorstatus", {motorstatus: randomMotorstatus});
 
-        let randomTijd = "2." + Math.floor(Math.random() * 60);
-        PubSub.publish("auto.rondetijden", {teamnaam: this.teamnaam, idno: this.idno, rondetijd: randomTijd});
         
     }
 }
 
 class RaceEngineer {
-    constructor(naam, idno) {
+    constructor(naam, teamnaam) {
         this.naam = naam;
-        this.idno = idno;
-        this.isActive = false;
+        this.teamnaam = teamnaam;
+        //this.isActive = false;
     }
 
-    setActive (active) {
-        this.isActive = active;
+    getNaam() {
+        return this.naam;
     }
 
-    getData(topic, data) {
-        console.log(this.idno +"-" + data.idno);
+    getTeamnaam() {
+        return this.teamnaam;
+    }
 
-        if (this.isActive && (this.idno == data.idno)) {
-            console.log(this.naam);
-            document.getElementById("teamnaam").innerHTML = raceDeelnemers[activeTeam].getTeamnaam();
+}
+
+const DataMonitor = {
+    
+    showData : function(topic, data) {
+        //console.log(raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam); 
+        if ( raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam ) {
+            document.getElementById("teamnaam").innerHTML = data.teamnaam;
+            //console.log((topic == "auto.motorstatus") + " - " + data.motorstatus);
             if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
             if (topic == "auto.bandentemperatuur") document.getElementById("bandentemp").innerHTML = data.bandentemperatuur + " deg. celsius";
             if (topic == "auto.motorstatus") document.getElementById("motorstatus").innerHTML = data.motorstatus;
         }
+
     }
+
 }
 
 const scorebord = {
     updateBord : function(topic, data) {
-        document.getElementById("row" + data.idno).innerHTML = data.teamnaam + ": " + data.rondetijd;
+        let pos = getMapPositionTeam (data.teamnaam);
+        document.getElementById("row" + pos).innerHTML = data.teamnaam + ": " + data.rondetijd;
+       
     }
 }
 
@@ -73,52 +83,52 @@ const scorebord = {
 let raceBezig = false;
 
 let subscribers = [];
-let raceDeelnemers = [];
-let raceEngineers = [];
-let activeTeam = 0;     // team waarvan de teamdata getoond wordt
+let raceDeelnemers = new Map();
+let raceEngineers = new Map();
+
+let engineerLoggedIn = "";
+
 let rondeTimer;  // variable voor het zetten van de timer
 
-raceDeelnemers.push (new RaceAuto("Red Bull", 0));  // set id no. to place in array
-raceEngineers.push (new RaceEngineer("Harry", 0 ));
+//let raceMonitor = new DataMonitor();
 
-raceDeelnemers.push (new RaceAuto("Ferrari", 1));   // set id no. to place in array
-raceEngineers.push (new RaceEngineer("Peter", 1 ));
+raceDeelnemers.set("Verstappen", new RaceAuto("Red Bull"));  
+raceEngineers.set("Harry", new RaceEngineer("Harry", "Red Bull"));
 
-for (let i=0; i<raceDeelnemers.length; i++) {
+raceDeelnemers.set("LeClerc", new RaceAuto("Ferrari"));   
+raceEngineers.set("Peter", new RaceEngineer("Peter", "Ferrari"));
+
+// set the options for the selection field
+for (let value of raceEngineers.values()) {
     let menu = document.getElementById("teamselector");
     let option = document.createElement("option");
-    //let value = document.createElement("value");
-    option.text = raceDeelnemers[i].getTeamnaam();
-    option.value = i;
+    option.text = value.getNaam() + "-" + value.getTeamnaam();
+    option.value = value.getNaam();
     menu.add(option);
-    }
+}
 
-    //console.log (document.getElementById("teamselector").value);
 
- // subscribe all engineers to all subjects for their own car
-for (let i=0; i < raceDeelnemers.length; i++) {
-    subscribers.push (PubSub.subscribe("auto", raceEngineers[i].getData.bind(raceEngineers[i])));
-    }
+// subscribe monitor to all subjects
+subscribers.push (PubSub.subscribe("auto", DataMonitor.showData));
+
 
 // scorebord subscribes to subject rondetijden only
 subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));   
 
-for (let i; i < raceDeelnemers.length; i++) {
-    getElementById
+function getMapPositionTeam(team) {
+    let i = 0;
+    for (let value of raceDeelnemers.values()) {
+        if (value.getTeamnaam() == team) return i;  
+        i++;         
+    }
+    return -1;
 }
 
 function kiesTeam() {
-    console.log("!" + activeTeam);
+    //console.log("!" + activeTeam);
     let keuze = document.getElementById("teamselector").value;
-    
-    raceEngineers[activeTeam].setActive(false);
-    activeTeam = keuze;
-    raceEngineers[activeTeam].setActive(true);
-    console.log(activeTeam);
-    raceEngineers.forEach(element => {
-        console.log(element.isActive);
-        
-    });
+    engineerLoggedin = keuze;
+    console.log(engineerLoggedin);
 }
 
 function startStopRace() {
@@ -134,12 +144,9 @@ function startStopRace() {
 }
 
 function rondjesRijden() {
-
-    for (let i=0; i<raceDeelnemers.length; i++){
-        raceDeelnemers[i].carStats();
+        for (let value of raceDeelnemers.values()) {
+            value.sendCarStats();
         }
     } 
-
-
 
 }
