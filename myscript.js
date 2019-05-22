@@ -59,7 +59,7 @@ const DataMonitor = {
     
     showData : function(topic, data) {
         //console.log(raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam); 
-        if ( raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam ) {
+        if ( (engineerLoggedin != "") && (raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam) ) {
             document.getElementById("teamnaam").innerHTML = data.teamnaam;
             //console.log((topic == "auto.motorstatus") + " - " + data.motorstatus);
             if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
@@ -86,7 +86,7 @@ let subscribers = [];
 let raceDeelnemers = new Map();
 let raceEngineers = new Map();
 
-let engineerLoggedIn = "";
+let engineerLoggedin = "";
 
 let rondeTimer;  // variable voor het zetten van de timer
 
