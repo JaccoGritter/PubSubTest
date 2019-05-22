@@ -27,15 +27,22 @@
     }
 
     #scorebordContainer {
-        width: 30rem;
+        width: 25rem;
         height: 20rem;
         background-color: cornsilk;
         margin: 1rem;
         padding-left: 2rem;
     }
 
+    #scorebordContainer div {
+        margin-top: 1rem;
+        width: 80%;
+        height: 2rem;
+        background-color: rgb(233, 222, 67);
+    }
+
     #teaminfo {
-        width: 30rem;
+        width: 25rem;
         height: 20rem;
         background-color: cornsilk;
         margin: 1rem;
@@ -54,15 +61,15 @@
     <div id="maincontainer">
 
         <div id="scorebordContainer">
-            <h2>INFO BORD</h2>
-            <div id="scorebord">Rondetijd</div>
-            <div class="tijd">0.00</div>
+            <!-- <h2>INFO BORD</h2> -->
+            <!-- <div class="scorebord" id="teamnaam"></div> -->
+            <!-- <div class="scorebord" id="rondetijd">Rondetijd</div> -->
         </div>
 
         <div id="teaminfo">
-            <h2>TEAM INFO</h2>
+            <h2 id="teamnaam">TEAM</h2>
             <p>Rondetijd:</p>
-            <div class="tijd">0.00</div><br>
+            <div id="tijd">0.00</div><br>
             <p>Motorstatus:</p>
             <div id="motorstatus"></div><br>
             <p>Bandentemperatuur:</p>
