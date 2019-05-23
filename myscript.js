@@ -2,7 +2,7 @@
 window.onload = function() { 
 
     document.getElementById("myStartButton").addEventListener("click", startStopRace);
-    document.getElementById("myMenuButton").addEventListener("click", kiesTeam);
+    document.getElementById("myMenuButton").addEventListener("click", engineerLogin);
 
     // build scoreboard for 5 cars (for the time being)
     for(let i = 0; i < 5; i++) {
@@ -26,13 +26,13 @@ class RaceAuto {
     sendCarStats() {
 
         let randomTemperatuur = Math.floor(Math.random() * 30) + 80;
-        PubSub.publish("auto.bandentemperatuur", {bandentemperatuur: randomTemperatuur});
+        PubSub.publish("auto.bandentemperatuur", {teamnaam: this.teamnaam, bandentemperatuur: randomTemperatuur});
 
         let randomTijd = "2." + Math.floor(Math.random() * 60);
         PubSub.publish("auto.rondetijden", {teamnaam: this.teamnaam, rondetijd: randomTijd});
 
         let randomMotorstatus = "" + (Math.floor(Math.random() * 50) + 50) + "%";
-        PubSub.publish("auto.motorstatus", {motorstatus: randomMotorstatus});
+        PubSub.publish("auto.motorstatus", {teamnaam: this.teamnaam, motorstatus: randomMotorstatus});
 
         
     }
@@ -42,7 +42,6 @@ class RaceEngineer {
     constructor(naam, teamnaam) {
         this.naam = naam;
         this.teamnaam = teamnaam;
-        //this.isActive = false;
     }
 
     getNaam() {
@@ -58,10 +57,8 @@ class RaceEngineer {
 const DataMonitor = {
     
     showData : function(topic, data) {
-        //console.log(raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam); 
         if ( (engineerLoggedin != "") && (raceEngineers.get(engineerLoggedin).getTeamnaam() == data.teamnaam) ) {
             document.getElementById("teamnaam").innerHTML = data.teamnaam;
-            //console.log((topic == "auto.motorstatus") + " - " + data.motorstatus);
             if (topic == "auto.rondetijden") document.getElementById("tijd").innerHTML = data.rondetijd;
             if (topic == "auto.bandentemperatuur") document.getElementById("bandentemp").innerHTML = data.bandentemperatuur + " deg. celsius";
             if (topic == "auto.motorstatus") document.getElementById("motorstatus").innerHTML = data.motorstatus;
@@ -71,7 +68,7 @@ const DataMonitor = {
 
 }
 
-const scorebord = {
+const Rondetijdenbord = {
     updateBord : function(topic, data) {
         let pos = getMapPositionTeam (data.teamnaam);
         document.getElementById("row" + pos).innerHTML = data.teamnaam + ": " + data.rondetijd;
@@ -82,7 +79,7 @@ const scorebord = {
 
 let raceBezig = false;
 
-let subscribers = [];
+//let subscribers = [];
 let raceDeelnemers = new Map();
 let raceEngineers = new Map();
 
@@ -109,11 +106,11 @@ for (let value of raceEngineers.values()) {
 
 
 // subscribe monitor to all subjects
-subscribers.push (PubSub.subscribe("auto", DataMonitor.showData));
+PubSub.subscribe("auto", DataMonitor.showData);
 
 
-// scorebord subscribes to subject rondetijden only
-subscribers.push (PubSub.subscribe("auto.rondetijden", scorebord.updateBord));   
+//scorebord subscribes to subject rondetijden only 
+PubSub.subscribe("auto.rondetijden", Rondetijdenbord.updateBord);
 
 function getMapPositionTeam(team) {
     let i = 0;
@@ -124,11 +121,9 @@ function getMapPositionTeam(team) {
     return -1;
 }
 
-function kiesTeam() {
-    //console.log("!" + activeTeam);
+function engineerLogin() {
     let keuze = document.getElementById("teamselector").value;
     engineerLoggedin = keuze;
-    console.log(engineerLoggedin);
 }
 
 function startStopRace() {
