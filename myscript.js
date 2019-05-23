@@ -1,9 +1,6 @@
 
 window.onload = function() { 
 
-
-
-
 class RaceAuto {
     constructor(teamnaam) {
         this.teamnaam = teamnaam;
@@ -44,7 +41,6 @@ class RaceEngineer {
     getTeamnaam() {
         return this.teamnaam;
     }
-
 }
 
 const DataMonitor = {
@@ -103,7 +99,7 @@ function rondjesRijden() {
 
 
 function buildRondetijdenbord () {
-    // build scoreboard for 5 cars (for the time being)
+    // build laptimes board for 5 cars (for the time being)
     for(let i = 0; i < 5; i++) {
         let newDiv = document.createElement("div");
         document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
@@ -126,7 +122,6 @@ document.getElementById("myMenuButton").addEventListener("click", engineerLogin)
 
 let raceBezig = false;
 
-//let subscribers = [];
 let raceDeelnemers = new Map();
 let raceEngineers = new Map();
 
@@ -134,22 +129,26 @@ let engineerLoggedin = "";
 
 let rondeTimer;  // variable voor het zetten van de timer
 
-//let raceMonitor = new DataMonitor();
-
 raceDeelnemers.set("Verstappen", new RaceAuto("Red Bull"));  
 raceEngineers.set("Harry", new RaceEngineer("Harry", "Red Bull"));
 
 raceDeelnemers.set("LeClerc", new RaceAuto("Ferrari"));   
 raceEngineers.set("Peter", new RaceEngineer("Peter", "Ferrari"));
 
+raceDeelnemers.set("Hamilton", new RaceAuto("Mercedes"));   
+raceEngineers.set("John", new RaceEngineer("John", "Mercedes"));
+
+raceDeelnemers.set("Ricciardo", new RaceAuto("Renault"));   
+raceEngineers.set("Angela", new RaceEngineer("Angela", "Renault"));
+
+raceDeelnemers.set("Sainz", new RaceAuto("McClaren"));   
+raceEngineers.set("Oege", new RaceEngineer("Oege", "McClaren"));
+
 buildRondetijdenbord();
 setEngineerloginoptions()
 
-
-
 // subscribe monitor to all subjects
 PubSub.subscribe("auto", DataMonitor.showData);
-
 
 //scorebord subscribes to subject rondetijden only 
 PubSub.subscribe("auto.rondetijden", Rondetijdenbord.updateBord);
