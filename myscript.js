@@ -1,14 +1,7 @@
 
 window.onload = function() { 
 
-    document.getElementById("myStartButton").addEventListener("click", startStopRace);
-    document.getElementById("myMenuButton").addEventListener("click", engineerLogin);
 
-    // build scoreboard for 5 cars (for the time being)
-    for(let i = 0; i < 5; i++) {
-        let newDiv = document.createElement("div");
-        document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
-    }
 
 
 class RaceAuto {
@@ -76,42 +69,6 @@ const Rondetijdenbord = {
     }
 }
 
-
-let raceBezig = false;
-
-//let subscribers = [];
-let raceDeelnemers = new Map();
-let raceEngineers = new Map();
-
-let engineerLoggedin = "";
-
-let rondeTimer;  // variable voor het zetten van de timer
-
-//let raceMonitor = new DataMonitor();
-
-raceDeelnemers.set("Verstappen", new RaceAuto("Red Bull"));  
-raceEngineers.set("Harry", new RaceEngineer("Harry", "Red Bull"));
-
-raceDeelnemers.set("LeClerc", new RaceAuto("Ferrari"));   
-raceEngineers.set("Peter", new RaceEngineer("Peter", "Ferrari"));
-
-// set the options for the selection field
-for (let value of raceEngineers.values()) {
-    let menu = document.getElementById("teamselector");
-    let option = document.createElement("option");
-    option.text = value.getNaam() + "-" + value.getTeamnaam();
-    option.value = value.getNaam();
-    menu.add(option);
-}
-
-
-// subscribe monitor to all subjects
-PubSub.subscribe("auto", DataMonitor.showData);
-
-
-//scorebord subscribes to subject rondetijden only 
-PubSub.subscribe("auto.rondetijden", Rondetijdenbord.updateBord);
-
 function getMapPositionTeam(team) {
     let i = 0;
     for (let value of raceDeelnemers.values()) {
@@ -143,5 +100,58 @@ function rondjesRijden() {
             value.sendCarStats();
         }
     } 
+
+
+function buildRondetijdenbord () {
+    // build scoreboard for 5 cars (for the time being)
+    for(let i = 0; i < 5; i++) {
+        let newDiv = document.createElement("div");
+        document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
+    }
+}
+
+function setEngineerloginoptions() {
+    // set the options for the selection field
+    for (let value of raceEngineers.values()) {
+        let menu = document.getElementById("teamselector");
+        let option = document.createElement("option");
+        option.text = value.getNaam() + "-" + value.getTeamnaam();
+        option.value = value.getNaam();
+        menu.add(option);
+    }
+}
+
+document.getElementById("myStartButton").addEventListener("click", startStopRace);
+document.getElementById("myMenuButton").addEventListener("click", engineerLogin);
+
+let raceBezig = false;
+
+//let subscribers = [];
+let raceDeelnemers = new Map();
+let raceEngineers = new Map();
+
+let engineerLoggedin = "";
+
+let rondeTimer;  // variable voor het zetten van de timer
+
+//let raceMonitor = new DataMonitor();
+
+raceDeelnemers.set("Verstappen", new RaceAuto("Red Bull"));  
+raceEngineers.set("Harry", new RaceEngineer("Harry", "Red Bull"));
+
+raceDeelnemers.set("LeClerc", new RaceAuto("Ferrari"));   
+raceEngineers.set("Peter", new RaceEngineer("Peter", "Ferrari"));
+
+buildRondetijdenbord();
+setEngineerloginoptions()
+
+
+
+// subscribe monitor to all subjects
+PubSub.subscribe("auto", DataMonitor.showData);
+
+
+//scorebord subscribes to subject rondetijden only 
+PubSub.subscribe("auto.rondetijden", Rondetijdenbord.updateBord);
 
 }
