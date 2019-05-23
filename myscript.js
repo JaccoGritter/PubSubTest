@@ -24,7 +24,6 @@ class RaceAuto {
         let randomMotorstatus = "" + (Math.floor(Math.random() * 50) + 50) + "%";
         PubSub.publish("auto.motorstatus", {teamnaam: this.teamnaam, motorstatus: randomMotorstatus});
 
-        
     }
 }
 
@@ -65,6 +64,7 @@ const Rondetijdenbord = {
     }
 }
 
+// get the position of a team in the map. Used by rondetijdenbord to select right div to display lap times
 function getMapPositionTeam(team) {
     let i = 0;
     for (let value of raceDeelnemers.values()) {
@@ -91,23 +91,23 @@ function startStopRace() {
     }
 }
 
+// send car stats for each car
 function rondjesRijden() {
         for (let value of raceDeelnemers.values()) {
             value.sendCarStats();
         }
     } 
 
-
+// build laptimes board for 5 cars (for the time being)
 function buildRondetijdenbord () {
-    // build laptimes board for 5 cars (for the time being)
     for(let i = 0; i < 5; i++) {
         let newDiv = document.createElement("div");
         document.getElementById("scorebordContainer").appendChild(newDiv).setAttribute("id", "row" + i);
     }
 }
 
+// set the options for the selection field
 function setEngineerloginoptions() {
-    // set the options for the selection field
     for (let value of raceEngineers.values()) {
         let menu = document.getElementById("teamselector");
         let option = document.createElement("option");
@@ -127,7 +127,7 @@ let raceEngineers = new Map();
 
 let engineerLoggedin = "";
 
-let rondeTimer;  // variable voor het zetten van de timer
+let rondeTimer;  // variable for setting the timer
 
 raceDeelnemers.set("Verstappen", new RaceAuto("Red Bull"));  
 raceEngineers.set("Harry", new RaceEngineer("Harry", "Red Bull"));
